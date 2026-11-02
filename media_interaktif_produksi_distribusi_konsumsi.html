@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petualangan Ekonomi: Produksi, Distribusi & Konsumsi</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{margin:0;background:linear-gradient(135deg,#e0f7fa,#fff8e1);color:#123}
+header{background:linear-gradient(90deg,#0288d1,#43a047);color:#fff;padding:22px;text-align:center;border-radius:0 0 24px 24px}
+h1{margin:0;font-size:26px}
+p.sub{margin:6px 0 0;opacity:.95}
+main{max-width:980px;margin:20px auto;padding:0 14px}
+.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:18px;box-shadow:0 8px 22px rgba(0,0,0,.08)}
+h2{margin-top:0;color:#0277bd}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.mini{border-radius:14px;padding:14px;color:#fff}
+.p{background:#43a047}.d{background:#fb8c00}.k{background:#8e24aa}
+.tag{display:inline-block;background:rgba(255,255,255,.25);padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font-weight:700}
+.btn-main{background:#0288d1;color:#fff}
+.btn-ghost{background:#eceff1;color:#37474f}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:10px 0}
+.flow div{padding:12px;border-radius:14px;font-weight:700;color:#fff}
+.arrow{font-size:22px;color:#455a64}
+.dragzone{min-height:70px;border:2px dashed #90a4ae;border-radius:14px;padding:10px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 12px;border-radius:999px;background:#e3f2fd;border:2px solid #0288d1;font-weight:700;cursor:grab;user-select:none}
+.chip.correct{background:#c8e6c9;border-color:#2e7d32}
+.chip.wrong{background:#ffcdd2;border-color:#c62828}
+.q{font-weight:700;margin:10px 0}
+.opt{display:block;width:100%;text-align:left;margin:7px 0;padding:12px;border-radius:12px;background:#f1f8e9;border:2px solid #aed581}
+.opt:hover{background:#dcedc8}
+.opt.correct{background:#c8e6c9;border-color:#2e7d32}
+.opt.wrong{background:#ffcdd2;border-color:#c62828}
+#score{font-size:20px;font-weight:800;color:#2e7d32}
+.hidden{display:none}
+.badge{background:#fff3e0;border:2px solid #ffb300;padding:12px;border-radius:14px;margin-top:12px;font-weight:700}
+footer{text-align:center;color:#546e7a;padding:18px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>🚀 Petualangan Ekonomi</h1>
+<p class="sub">Belajar Produksi, Distribusi, dan Konsumsi lewat permainan interaktif</p>
+</header>
+<main>
+<section class="card">
+<h2>📚 Kenali Tiga Kegiatan Ekonomi</h2>
+<div class="grid">
+<div class="mini p"><span class="tag">PRODUKSI</span><h3>🏭 Membuat</h3><p>Kegiatan menghasilkan barang atau jasa. Contoh: petani menanam padi, penjahit membuat baju.</p></div>
+<div class="mini d"><span class="tag">DISTRIBUSI</span><h3>🚚 Menyalurkan</h3><p>Kegiatan mengantarkan barang/jasa dari produsen ke konsumen. Contoh: pengiriman buah ke pasar.</p></div>
+<div class="mini k"><span class="tag">KONSUMSI</span><h3>🍽️ Menggunakan</h3><p>Kegiatan memakai barang/jasa untuk memenuhi kebutuhan. Contoh: makan nasi, memakai seragam.</p></div>
+</div>
+<div class="flow">
+<div class="p">Produsen</div><span class="arrow">➡️</span>
+<div class="d">Distributor</div><span class="arrow">➡️</span>
+<div class="k">Konsumen</div>
+</div>
+<p><b>Ingat:</b> Ketiganya saling membutuhkan. Tanpa produksi tidak ada barang; tanpa distribusi barang tidak sampai; tanpa konsumsi barang tidak terpakai.</p>
+</section>
+
+<section class="card">
+<h2>🎮 Tantangan 1: Klasifikasikan Kegiatan</h2>
+<p>Seret setiap kartu ke kotak yang benar.</p>
+<div id="chips" class="dragzone"></div>
+<div class="grid" style="margin-top:14px">
+<div><h3>🏭 Produksi</h3><div class="dragzone" data-cat="produksi"></div></div>
+<div><h3>🚚 Distribusi</h3><div class="dragzone" data-cat="distribusi"></div></div>
+<div><h3>🍽️ Konsumsi</h3><div class="dragzone" data-cat="konsumsi"></div></div>
+</div>
+<button class="btn-main" onclick="checkSort()">Periksa Jawaban</button>
+<button class="btn-ghost" onclick="resetSort()">Ulangi</button>
+<p id="sortResult"></p>
+</section>
+
+<section class="card">
+<h2>🎯 Tantangan 2: Kuis Analisis</h2>
+<div id="quiz"></div>
+<button class="btn-main" onclick="nextQ()">Jawab & Lanjut</button>
+<p>Skor: <span id="score">0</span>/10</p>
+<div id="final" class="badge hidden"></div>
+</section>
+</main>
+<footer>Dibuat untuk pembelajaran IPS yang menyenangkan • Produksi → Distribusi → Konsumsi</footer>
+<script>
+const items=[
+ {t:"Petani menanam padi",c:"produksi"},
+ {t:"Pengiriman roti ke toko",c:"distribusi"},
+ {t:"Siswa makan bakso",c:"konsumsi"},
+ {t:"Penjahit membuat seragam",c:"produksi"},
+ {t:"Truk mengantar sayur ke pasar",c:"distribusi"},
+ {t:"Keluarga memakai listrik",c:"konsumsi"},
+ {t:"Pabrik membuat sepatu",c:"produksi"},
+ {t:"Kurir mengantar paket",c:"distribusi"},
+ {t:"Anak membaca buku",c:"konsumsi"}
+];
+const chips=document.getElementById('chips');
+function resetSort(){
+ chips.innerHTML='';document.querySelectorAll('[data-cat]').forEach(z=>{if(z.id!=='chips')z.innerHTML=''});
+ document.getElementById('sortResult').textContent='';
+ items.sort(()=>Math.random()-.5).forEach((it,i)=>{
+  const c=document.createElement('div');c.className='chip';c.textContent=it.t;c.draggable=true;c.dataset.cat=it.c;c.id='c'+i;
+  c.addEventListener('dragstart',e=>e.dataTransfer.setData('text',c.id));
+  chips.appendChild(c);
+ });
+}
+document.querySelectorAll('.dragzone').forEach(z=>{
+ z.addEventListener('dragover',e=>e.preventDefault());
+ z.addEventListener('drop',e=>{e.preventDefault();const id=e.dataTransfer.getData('text');const el=document.getElementById(id);if(el)z.appendChild(el);});
+});
+function checkSort(){
+ let ok=0,total=0;
+ document.querySelectorAll('[data-cat]').forEach(z=>{
+  if(z.id==='chips')return;
+  [...z.children].forEach(ch=>{total++;const good=ch.dataset.cat===z.dataset.cat;ch.classList.toggle('correct',good);ch.classList.toggle('wrong',!good);if(good)ok++;});
+ });
+ document.getElementById('sortResult').innerHTML=ok===total?"🎉 Hebat! Semua kartu tepat.":`✅ Benar: ${ok} dari ${total}. Kartu merah perlu dipindahkan.`;
+}
+const qs=[
+ {q:"Seorang petani menanam padi, hasilnya diangkut ke pasar, lalu dibeli keluarga untuk dimasak. Urutan kegiatan ekonomi yang benar adalah...",o:["Konsumsi → produksi → distribusi","Produksi → distribusi → konsumsi","Distribusi → produksi → konsumsi","Produksi → konsumsi → distribusi"],a:1},
+ {q:"Sebuah pabrik roti membeli tepung, memanggang roti, mengirimkannya ke minimarket, dan roti dibeli konsumen. Pembelian tepung oleh pabrik termasuk...",o:["Konsumsi karena tepung digunakan","Produksi karena menjadi bahan baku roti","Distribusi karena tepung dipindahkan","Konsumsi produktif karena digunakan untuk menghasilkan barang"],a:3},
+ {q:"Manakah pernyataan yang paling tepat tentang hubungan produsen, distributor, dan konsumen?",o:["Produsen selalu menjadi konsumen akhir","Distributor hanya menghasilkan barang","Konsumen tidak berhubungan dengan distributor","Ketiganya saling terhubung dalam memenuhi kebutuhan"],a:3},
+ {q:"Sebuah toko online menerima pesanan sepatu, mengemasnya, lalu mengirimkannya melalui kurir ke pembeli. Kegiatan mengemas dan mengirim sepatu disebut...",o:["Produksi","Distribusi","Konsumsi","Konsumsi produktif"],a:1},
+ {q:"Ibu membeli beras untuk dimasak menjadi makanan keluarga. Berdasarkan penggunaannya, pembelian beras tersebut termasuk...",o:["Konsumsi produktif","Konsumsi produktif jika dijual kembali","Konsumsi tidak produktif karena beras dimakan","Produksi karena beras diolah"],a:2},
+ {q:"Perbedaan utama konsumsi produktif dan tidak produktif adalah...",o:["Konsumsi produktif selalu mahal","Konsumsi produktif digunakan untuk menghasilkan barang/jasa","Konsumsi tidak produktif dilakukan oleh produsen","Konsumsi produktif tidak melibatkan uang"],a:1},
+ {q:"Sebuah UMKM membuat tas dari limbah plastik. Selain menghasilkan barang, kegiatan tersebut juga memberi manfaat berupa...",o:["Meningkatkan limbah plastik","Mengurangi nilai guna barang","Memanfaatkan bahan bekas menjadi produk bernilai","Menghapus kegiatan distribusi"],a:2},
+ {q:"Jika terjadi gangguan distribusi, misalnya jalan tertutup sehingga sayur tidak sampai ke pasar, dampak yang paling mungkin adalah...",o:["Harga sayur pasti turun","Konsumen sulit memperoleh sayur dan harga dapat naik","Produksi sayur otomatis berhenti","Konsumsi sayur meningkat drastis"],a:1},
+ {q:"Perusahaan menghasilkan sepatu, tetapi banyak sepatu tidak terjual karena konsumen tidak tertarik. Masalah utama yang terjadi adalah...",o:["Kegiatan produksi tidak sesuai kebutuhan konsumen","Distribusi terlalu cepat","Konsumsi terlalu produktif","Produsen menjadi konsumen"],a:0},
+ {q:"Dalam kegiatan ekonomi, nilai tambah tercipta ketika...",o:["Barang hanya dipindahkan tanpa perubahan","Bahan baku diolah, disalurkan, atau disediakan pada waktu dan tempat yang tepat","Konsumen membuang barang yang tidak dipakai","Distributor menjadi pemilik pabrik"],a:1}
+];
+let qi=0,score=0,answered=false;
+function renderQ(){
+ answered=false;
+ const q=qs[qi];
+ document.getElementById('quiz').innerHTML=`<p class="q">${qi+1}. ${q.q}</p>`+q.o.map((o,i)=>`<button class="opt" onclick="answer(${i})">${o}</button>`).join('');
+}
+function answer(i){
+ if(answered)return;answered=true;
+ const q=qs[qi];const btns=document.querySelectorAll('.opt');
+ btns.forEach((b,j)=>{if(j===q.a)b.classList.add('correct');else if(j===i)b.classList.add('wrong')});
+ if(i===q.a){score++;document.getElementById('score').textContent=score;}
+}
+function nextQ(){
+ if(!answered){alert("Pilih jawaban dulu ya!");return;}
+ qi++;
+ if(qi<qs.length)renderQ();
+ else{
+  document.getElementById('quiz').innerHTML=`<h3>🏆 Kuis selesai!</h3><p>Kamu menjawab benar ${score} dari 10 soal.</p>`;
+  const f=document.getElementById('final');f.classList.remove('hidden');
+  f.textContent=score>=8?"Luar biasa! Kamu sudah paham produksi, distribusi, dan konsumsi. 🌟":score>=6?"Bagus! Pelajari lagi bagian yang masih keliru. 👍":"Ayo ulangi kuisnya agar lebih paham. 💪";
+ }
+}
+resetSort();renderQ();
+</script>
+</body>
+</html>
